@@ -1,0 +1,63 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+
+steps:
+
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'sudo apt-get update'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'sudo apt-get install -y curl apt-transport-https lsb-release gpg'
+    
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: sudo apt install nodejs npm
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-archive-keyring.gpg'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-archive-keyring.gpg] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/azure-cli.list'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'sudo apt-get update'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'sudo apt-get install -y azure-cli'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: az login --username 1098586@est.intec.edu.do --password Abcd1234
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'az account set --subscription 99eb5e86-9fbe-4df2-a8a7-53f6373e6ff3'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'az webapp deployment source config --name OmsappAdministracion --resource-group omsapp --repo-url https://INTEC-ING235-01-2023-01-Equipo-2@dev.azure.com/INTEC-ING235-01-2023-01-Equipo-2/INTEC-IDS352-02-2023-01-Equipo-1/_git/OMSAPP-FRONT-END-WEB'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: az webapp deployment source sync --name OmsappAdministracion --resource-group omsapp
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'az webapp deployment source show --name OmsappAdministracion --resource-group omsapp'
